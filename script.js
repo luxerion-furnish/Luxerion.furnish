@@ -51,8 +51,10 @@ function closeMobileMenu() {
 // ── Smooth Scroll ──
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const target = document.querySelector(href);
         if (target) {
             const offset = navbar.offsetHeight + 20;
             const top = target.getBoundingClientRect().top + window.scrollY - offset;
@@ -167,27 +169,86 @@ if (hero) {
     }, { passive: true });
 }
 
-// ── Form Handlers ──
-const contactForm = document.querySelector('.contact-form form');
+// ── Contact Form → Email (FormSubmit) + WhatsApp ──
+const OWNER_EMAIL = 'luxerion.furnish@gmail.com';
+const OWNER_WHATSAPP = '919076005939';
+
+const contactForm = document.getElementById('contactForm');
+const formStatus = document.getElementById('formStatus');
+
+function showStatus(type, msg) {
+    formStatus.className = 'form-status show ' + type;
+    formStatus.textContent = msg;
+    setTimeout(() => formStatus.classList.remove('show'), 8000);
+}
+
+function openWhatsApp(data) {
+    const text =
+        `🛋️ *New Enquiry — Luxerion Website*%0A%0A` +
+        `👤 *Name:* ${encodeURIComponent(data.name)}%0A` +
+        `📧 *Email:* ${encodeURIComponent(data.email)}%0A` +
+        `📞 *Phone:* ${encodeURIComponent(data.phone)}%0A` +
+        `🛠️ *Service:* ${encodeURIComponent(data.service)}%0A` +
+        `💬 *Message:* ${encodeURIComponent(data.message)}`;
+    window.open(`https://wa.me/${OWNER_WHATSAPP}?text=${text}`, '_blank');
+}
+
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = contactForm.querySelector('.btn');
         const originalText = btn.textContent;
         btn.textContent = 'Sending...';
         btn.style.pointerEvents = 'none';
 
-        setTimeout(() => {
-            btn.textContent = 'Message Sent!';
-            btn.style.background = '#2ecc71';
-            contactForm.reset();
+        const data = {
+            name: contactForm.name.value.trim(),
+            email: contactForm.email.value.trim(),
+            phone: contactForm.phone.value.trim(),
+            service: contactForm.service.value,
+            message: contactForm.message.value.trim()
+        };
 
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = '';
-                btn.style.pointerEvents = '';
-            }, 2500);
-        }, 1200);
+        try {
+            // Send email via FormSubmit (no backend needed)
+            const res = await fetch(`https://formsubmit.co/ajax/${OWNER_EMAIL}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: `🛋️ New Enquiry from ${data.name} — Luxerion Website`,
+                    _template: 'table',
+                    _captcha: 'false',
+                    Name: data.name,
+                    Email: data.email,
+                    Phone: data.phone,
+                    Service: data.service,
+                    Message: data.message
+                })
+            });
+
+            if (!res.ok) throw new Error('Email service error');
+
+            btn.textContent = 'Message Sent! ✓';
+            btn.style.background = '#3a8f5d';
+            showStatus('success', '✓ Message sent to our email! Opening WhatsApp to confirm...');
+
+            // Also send details on WhatsApp
+            setTimeout(() => openWhatsApp(data), 900);
+            contactForm.reset();
+        } catch (err) {
+            // Email failed — fallback to WhatsApp so enquiry is never lost
+            btn.textContent = 'Sent via WhatsApp ✓';
+            btn.style.background = '#25d366';
+            showStatus('success', '✓ Sending your enquiry via WhatsApp...');
+            openWhatsApp(data);
+            contactForm.reset();
+        }
+
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.style.pointerEvents = '';
+        }, 3000);
     });
 }
 
@@ -200,7 +261,7 @@ if (newsletterForm) {
         const originalText = btn.textContent;
 
         btn.textContent = 'Subscribed!';
-        btn.style.background = '#2ecc71';
+        btn.style.background = '#3a8f5d';
         input.value = '';
 
         setTimeout(() => {
