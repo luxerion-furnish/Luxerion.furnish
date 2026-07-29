@@ -132,24 +132,37 @@ if (statsSection) statsObserver.observe(statsSection);
 const sections = document.querySelectorAll('section[id]');
 const allNavLinks = document.querySelectorAll('.nav-links a');
 
-window.addEventListener('scroll', () => {
+function updateActiveNav() {
     let current = '';
-    const offset = navbar.offsetHeight + 100;
+    const offset = navbar.offsetHeight + 120;
 
     sections.forEach(section => {
-        const top = section.offsetTop - offset;
-        if (window.scrollY >= top) {
+        if (window.scrollY >= section.offsetTop - offset) {
             current = section.getAttribute('id');
         }
     });
 
+    // Page ke bilkul end pe last section (Contact) active rahe
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10) {
+        current = sections[sections.length - 1].getAttribute('id');
+    }
+
     allNavLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-            link.classList.add('active');
-        }
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
     });
+}
+
+let navTicking = false;
+window.addEventListener('scroll', () => {
+    if (!navTicking) {
+        requestAnimationFrame(() => {
+            updateActiveNav();
+            navTicking = false;
+        });
+        navTicking = true;
+    }
 }, { passive: true });
+updateActiveNav();
 
 // ── Hero Parallax (GPU-accelerated) ──
 const hero = document.querySelector('.hero');
@@ -249,25 +262,6 @@ if (contactForm) {
             btn.style.background = '';
             btn.style.pointerEvents = '';
         }, 3000);
-    });
-}
-
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
-    newsletterForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = newsletterForm.querySelector('input');
-        const btn = newsletterForm.querySelector('.btn');
-        const originalText = btn.textContent;
-
-        btn.textContent = 'Subscribed!';
-        btn.style.background = '#3a8f5d';
-        input.value = '';
-
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-        }, 2500);
     });
 }
 

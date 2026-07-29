@@ -69,10 +69,12 @@ h1, h2, h3, .logo {
 .preloader-inner { text-align: center; }
 .preloader-logo {
     font-family: 'Playfair Display', serif;
-    font-size: 2rem; font-weight: 700;
+    font-size: clamp(1.25rem, 5.5vw, 2rem);
+    font-weight: 700;
     color: var(--accent);
-    letter-spacing: 8px;
+    letter-spacing: clamp(3px, 1.5vw, 7px);
     margin-bottom: 28px;
+    padding: 0 16px;
     animation: preloaderPulse 1.4s ease-in-out infinite;
 }
 .preloader-bar {
@@ -120,9 +122,10 @@ h1, h2, h3, .logo {
     border-bottom: 1px solid var(--border);
 }
 .logo {
-    font-size: 1.55rem;
+    font-size: clamp(1rem, 2vw, 1.4rem);
     font-weight: 700;
-    letter-spacing: 3.5px;
+    letter-spacing: 2px;
+    white-space: nowrap;
     color: var(--text-primary);
     transition: transform 0.3s var(--ease-spring);
 }
@@ -142,15 +145,16 @@ h1, h2, h3, .logo {
     color: var(--text-secondary);
     padding: 6px 2px;
     letter-spacing: 0.6px;
+    white-space: nowrap;
     transition: color 0.3s var(--ease-smooth);
 }
 .nav-links a::after {
     content: '';
     position: absolute;
-    bottom: 0; left: 50%;
-    width: 0; height: 2px;
+    bottom: -2px; left: 50%;
+    width: 0; height: 2.5px;
     background: var(--accent-gradient);
-    border-radius: 2px;
+    border-radius: 3px;
     transform: translateX(-50%);
     transition: width 0.35s var(--ease-smooth);
 }
@@ -450,30 +454,6 @@ section { padding: 100px 6%; }
     transition: transform 0.7s var(--ease-smooth);
 }
 .card:hover .card-img { transform: scale(1.05); }
-.card-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 30%, rgba(34, 28, 20, 0.75));
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 26px;
-    opacity: 0;
-    transition: opacity 0.45s var(--ease-smooth);
-}
-.card:hover .card-overlay { opacity: 1; }
-.card-overlay-link {
-    padding: 11px 28px;
-    background: rgba(255, 255, 255, 0.94);
-    color: var(--text-primary);
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    transform: translateY(14px);
-    transition: transform 0.45s var(--ease-spring), background 0.3s, color 0.3s;
-}
-.card:hover .card-overlay-link { transform: translateY(0); }
-.card-overlay-link:hover { background: var(--accent); color: #fff; }
 .card-info { padding: 26px 26px 30px; }
 .card-category {
     display: inline-block;
@@ -868,7 +848,7 @@ footer {
 }
 .footer-content {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+    grid-template-columns: 1.6fr 1fr 1fr;
     gap: 48px;
     max-width: 1240px;
     margin: 0 auto;
@@ -904,30 +884,6 @@ footer {
     color: var(--accent-light);
     padding-left: 6px;
 }
-.newsletter-form {
-    display: flex;
-    gap: 10px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-}
-.newsletter-form input {
-    flex: 1;
-    min-width: 0;
-    padding: 13px 18px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 50px;
-    color: var(--text-on-dark);
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.3s, background 0.3s;
-}
-.newsletter-form input::placeholder { color: rgba(244, 239, 231, 0.4); }
-.newsletter-form input:focus {
-    border-color: var(--accent-light);
-    background: rgba(255, 255, 255, 0.1);
-}
-.newsletter-form .btn { padding: 13px 26px; min-height: 46px; }
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding: 26px 0;
@@ -947,7 +903,8 @@ footer {
     .about-container,
     .contact-container { gap: 48px; }
     .footer-content { grid-template-columns: 1fr 1fr; }
-    .nav-links { gap: 24px; }
+    .nav-links { gap: 18px; }
+    .nav-links a { font-size: 0.85rem; letter-spacing: 0.3px; }
 }
 
 @media (max-width: 768px) {
@@ -989,7 +946,7 @@ footer {
     section { padding: 68px 5%; }
     .navbar { padding: 16px 5%; }
     .navbar.scrolled { padding: 12px 5%; }
-    .logo { font-size: 1.3rem; }
+    .logo { font-size: 1rem; letter-spacing: 1.5px; }
 
     .hero-content { padding: 96px 18px 70px; }
     .hero-tag { font-size: 0.72rem; padding: 8px 20px; letter-spacing: 2px; }
@@ -1010,8 +967,6 @@ footer {
     .contact-item .icon { width: 46px; height: 46px; min-width: 46px; font-size: 1.3rem; }
 
     .footer-content { grid-template-columns: 1fr; gap: 34px; text-align: center; }
-    .newsletter-form { justify-content: center; }
-    .newsletter-form .btn { width: 100%; }
     .social-links { justify-content: flex-start; }
 
     .float-actions { bottom: 18px; right: 18px; gap: 12px; }
@@ -1035,8 +990,6 @@ footer {
 @media (hover: none) {
     .card:hover, .service-card:hover, .testimonial-card:hover,
     .contact-item:hover { transform: none; }
-    .card .card-overlay { opacity: 1; background: linear-gradient(180deg, transparent 55%, rgba(34, 28, 20, 0.7)); }
-    .card .card-overlay-link { transform: translateY(0); }
 }
 
 /* Reduced motion accessibility */
