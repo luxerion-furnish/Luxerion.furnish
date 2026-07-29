@@ -57,6 +57,21 @@ h1, h2, h3, .logo {
 
 ::selection { background: var(--accent); color: #fff; }
 
+/* ── Scroll Progress Bar ── */
+.scroll-progress {
+    position: fixed;
+    top: 0; left: 0;
+    width: 0%;
+    height: 3.5px;
+    background: var(--accent-gradient);
+    background-size: 200% auto;
+    z-index: 2000;
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 12px rgba(160, 118, 46, 0.55);
+    animation: goldFlow 3s linear infinite;
+    pointer-events: none;
+}
+
 /* ── Preloader ── */
 .preloader {
     position: fixed; inset: 0;
@@ -122,15 +137,41 @@ h1, h2, h3, .logo {
     border-bottom: 1px solid var(--border);
 }
 .logo {
-    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-size: clamp(0.95rem, 2vw, 1.4rem);
     font-weight: 700;
     letter-spacing: 2px;
     white-space: nowrap;
     color: var(--text-primary);
     transition: transform 0.3s var(--ease-spring);
+    flex-shrink: 0;
 }
 .logo:hover { transform: scale(1.04); }
-.logo span { color: var(--accent); }
+.logo span {
+    color: var(--accent);
+    background: linear-gradient(110deg, var(--accent) 35%, #e8c883 50%, var(--accent) 65%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: logoShimmer 3.5s linear infinite;
+}
+/* LUXERION ke baad wala golden dot — dhadakta hua */
+.logo .logo-dot,
+.footer-section h3 .logo-dot {
+    display: inline-block;
+    background: none;
+    -webkit-text-fill-color: var(--accent);
+    color: var(--accent);
+    animation: dotPulse 1.8s ease-in-out infinite;
+}
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); text-shadow: 0 0 0 rgba(160, 118, 46, 0); }
+    50%      { transform: scale(1.45); text-shadow: 0 0 10px rgba(200, 157, 85, 0.8); }
+}
+@keyframes logoShimmer {
+    0%   { background-position: 120% center; }
+    100% { background-position: -100% center; }
+}
 
 .nav-links {
     display: flex;
@@ -225,6 +266,38 @@ h1, h2, h3, .logo {
     max-width: 860px;
     padding: 110px 24px 60px;
 }
+
+/* Hero floating gold particles */
+.hero-particles {
+    position: absolute; inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+.hero-particles span {
+    position: absolute;
+    bottom: -12px;
+    width: 7px; height: 7px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 12px rgba(200, 157, 85, 0.8);
+    animation: particleFloat 11s linear infinite;
+}
+.hero-particles span:nth-child(1) { left: 8%;  animation-delay: 0s;    transform: scale(0.7); }
+.hero-particles span:nth-child(2) { left: 22%; animation-delay: 2.2s;  transform: scale(1.1); }
+.hero-particles span:nth-child(3) { left: 35%; animation-delay: 4.8s;  transform: scale(0.55); }
+.hero-particles span:nth-child(4) { left: 48%; animation-delay: 1.4s;  transform: scale(0.9); }
+.hero-particles span:nth-child(5) { left: 61%; animation-delay: 6s;    transform: scale(0.65); }
+.hero-particles span:nth-child(6) { left: 73%; animation-delay: 3.4s;  transform: scale(1.2); }
+.hero-particles span:nth-child(7) { left: 85%; animation-delay: 7.6s;  transform: scale(0.8); }
+.hero-particles span:nth-child(8) { left: 94%; animation-delay: 5.2s;  transform: scale(0.5); }
+@keyframes particleFloat {
+    0%   { transform: translateY(0); opacity: 0; }
+    8%   { opacity: 0.85; }
+    85%  { opacity: 0.4; }
+    100% { transform: translateY(-92vh); opacity: 0; }
+}
 .hero-tag {
     display: inline-block;
     padding: 9px 26px;
@@ -238,6 +311,11 @@ h1, h2, h3, .logo {
     letter-spacing: 2.5px;
     text-transform: uppercase;
     margin-bottom: 28px;
+    animation: tagGlow 3s ease-in-out infinite;
+}
+@keyframes tagGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(160, 118, 46, 0); }
+    50%      { box-shadow: 0 0 22px 2px rgba(160, 118, 46, 0.25); }
 }
 .hero h1 {
     font-size: clamp(2.6rem, 7.5vw, 5.2rem);
@@ -245,6 +323,37 @@ h1, h2, h3, .logo {
     line-height: 1.12;
     margin-bottom: 24px;
     color: var(--text-primary);
+}
+
+/* Hero title — letter by letter cinematic reveal */
+.hero-title .ch {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.7em) rotate(5deg) scale(0.85);
+    filter: blur(6px);
+    transition: opacity 0.65s var(--ease-smooth),
+                transform 0.65s var(--ease-spring),
+                filter 0.65s var(--ease-smooth);
+    transition-delay: calc(var(--i) * 42ms);
+    will-change: transform, opacity;
+}
+.hero-title.ready .ch {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+    filter: blur(0);
+}
+/* Doosri line ke letters pe golden gradient */
+.hero-title .ch.gold-ch {
+    background: linear-gradient(120deg, var(--accent-dark), var(--accent-light) 55%, var(--accent-dark));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldFlow 5s ease-in-out infinite;
+}
+@keyframes goldFlow {
+    0%, 100% { background-position: 0% center; }
+    50%      { background-position: 100% center; }
 }
 .hero p {
     font-size: clamp(1rem, 2.2vw, 1.18rem);
@@ -262,6 +371,8 @@ h1, h2, h3, .logo {
 
 /* ── Buttons ── */
 .btn {
+    position: relative;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -277,6 +388,20 @@ h1, h2, h3, .logo {
                 background 0.35s, color 0.35s, border-color 0.35s;
     -webkit-tap-highlight-color: transparent;
     min-height: 48px;
+}
+/* Shine sweep — button pe roshni ki lakeer */
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -80%;
+    width: 50%; height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    animation: btnShine 3.2s ease-in-out infinite;
+}
+@keyframes btnShine {
+    0%       { left: -80%; }
+    55%, 100% { left: 130%; }
 }
 .btn:active { transform: scale(0.96); }
 .btn-primary {
@@ -393,6 +518,46 @@ h1, h2, h3, .logo {
     font-weight: 500;
 }
 
+/* ── Marquee Ribbon ── */
+.marquee {
+    background: var(--bg-section);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    overflow: hidden;
+}
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll 26s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-group {
+    display: flex;
+    align-items: center;
+    gap: 38px;
+    padding-right: 38px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.marquee-group .gold {
+    color: var(--accent);
+    animation: starSpin 7s linear infinite;
+}
+@keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@keyframes starSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
 /* ── Section Base ── */
 section { padding: 100px 6%; }
 .section-header {
@@ -411,12 +576,38 @@ section { padding: 100px 6%; }
     padding: 6px 18px;
     background: var(--accent-soft);
     border-radius: 50px;
+    animation: tagGlow 3.5s ease-in-out infinite;
 }
 .section-title {
     font-size: clamp(2rem, 4.5vw, 2.9rem);
     font-weight: 700;
     margin-bottom: 16px;
 }
+/* Section title — word by word rise animation on scroll */
+.section-title .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px) skewY(3deg);
+    transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-spring);
+    transition-delay: calc(var(--w) * 110ms);
+    will-change: transform, opacity;
+}
+.section-title.in-view .word {
+    opacity: 1;
+    transform: translateY(0) skewY(0);
+}
+/* Title ke neeche golden line grow hoti hui */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    margin: 18px auto 0;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+    transition: width 0.8s var(--ease-smooth) 0.45s;
+}
+.section-title.in-view::after { width: 74px; }
 .section-subtitle {
     color: var(--text-secondary);
     font-size: 1.02rem;
@@ -453,6 +644,17 @@ section { padding: 100px 6%; }
     overflow: hidden;
     transition: transform 0.7s var(--ease-smooth);
 }
+/* Hover pe image ke upar sheen sweep */
+.card-img::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -85%;
+    width: 55%; height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    transform: skewX(-22deg);
+    transition: left 0.75s var(--ease-smooth);
+}
+.card:hover .card-img::after { left: 135%; }
 .card:hover .card-img { transform: scale(1.05); }
 .card-info { padding: 26px 26px 30px; }
 .card-category {
@@ -510,8 +712,14 @@ section { padding: 100px 6%; }
     background: var(--accent-soft);
     border-radius: 24px;
     transition: transform 0.5s var(--ease-spring), background 0.4s, color 0.4s;
+    animation: iconFloat 3.6s ease-in-out infinite;
+}
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-7px); }
 }
 .service-card:hover .service-icon {
+    animation-play-state: paused;
     transform: scale(1.1) rotate(-4deg);
     background: var(--accent-gradient);
     color: #fff;
@@ -625,6 +833,11 @@ section { padding: 100px 6%; }
     font-size: 1.05rem;
     letter-spacing: 3px;
     margin-bottom: 18px;
+    animation: starsTwinkle 2.8s ease-in-out infinite;
+}
+@keyframes starsTwinkle {
+    0%, 100% { text-shadow: 0 0 0 rgba(224, 169, 60, 0); }
+    50%      { text-shadow: 0 0 14px rgba(224, 169, 60, 0.75); }
 }
 .testimonial-content p {
     color: var(--text-secondary);
@@ -806,6 +1019,12 @@ section { padding: 100px 6%; }
     flex-direction: column;
     align-items: center;
     gap: 14px;
+    transition: transform 0.45s var(--ease-spring), opacity 0.45s var(--ease-smooth);
+}
+/* Scroll karte waqt buttons chhote ho jate hain, rukte hi pop back */
+body.is-scrolling .float-actions {
+    transform: scale(0.85) translateY(6px);
+    opacity: 0.65;
 }
 .float-btn {
     display: flex;
@@ -854,13 +1073,14 @@ footer {
     margin: 0 auto;
     padding-bottom: 56px;
 }
-.footer-section h3 {
+.footer-section h3 { 
     font-size: 1.5rem;
     letter-spacing: 3px;
     margin-bottom: 16px;
     color: var(--text-on-dark);
 }
 .footer-section h3 span { color: var(--accent-light); }
+.footer-section h3 .logo-dot { -webkit-text-fill-color: var(--accent-light); color: var(--accent-light); }
 .footer-section h4 {
     font-size: 1rem;
     font-weight: 600;
@@ -895,20 +1115,112 @@ footer {
 }
 
 /* ═══════════════════════════════════════════
+   SCROLL vs IDLE — Dual Animation System
+   Scroll karte waqt: velocity tilt + speed effects
+   Rukne par: floating / breathing / glow animations
+   ═══════════════════════════════════════════ */
+
+/* ─ Scroll hote waqt ─ */
+.marquee-group { transition: color 0.5s var(--ease-smooth), letter-spacing 0.5s var(--ease-smooth); }
+body.is-scrolling .marquee-group { color: var(--accent-dark); letter-spacing: 4.5px; }
+
+.hero-particles span { transition: filter 0.4s; }
+body.is-scrolling .hero-particles span { filter: blur(2.5px); }
+
+body.is-scrolling .navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(160, 118, 46, 0.22);
+}
+body.is-scrolling .logo .logo-dot { animation-duration: 0.6s; }
+
+/* Velocity tilt targets — JS inse skewY set karta hai */
+.grid, .services-grid, .testimonials-grid,
+.about-container, .contact-container, .stats-container {
+    will-change: transform;
+}
+
+/* ─ Rukne par (idle) — sab kuch saans lene lagta hai ─ */
+body.is-idle .card:not(:hover) { animation: cardFloat 5s ease-in-out infinite; }
+body.is-idle .card:nth-child(2n):not(:hover) { animation-delay: 0.7s; }
+body.is-idle .card:nth-child(3n):not(:hover) { animation-delay: 1.4s; }
+@keyframes cardFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-9px); }
+}
+
+body.is-idle .hero-content { animation: contentBreath 7s ease-in-out infinite; }
+@keyframes contentBreath {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-8px) scale(1.008); }
+}
+
+body.is-idle .stat-item h3 { animation: statGlow 2.6s ease-in-out infinite; }
+body.is-idle .stat-item:nth-child(2) h3 { animation-delay: 0.4s; }
+body.is-idle .stat-item:nth-child(3) h3 { animation-delay: 0.8s; }
+body.is-idle .stat-item:nth-child(4) h3 { animation-delay: 1.2s; }
+@keyframes statGlow {
+    0%, 100% { text-shadow: 0 0 0 rgba(200, 157, 85, 0); }
+    50%      { text-shadow: 0 0 24px rgba(200, 157, 85, 0.85); }
+}
+
+body.is-idle .feature-icon { animation: featurePop 3.2s ease-in-out infinite; }
+body.is-idle .feature:nth-child(2) .feature-icon { animation-delay: 0.4s; }
+body.is-idle .feature:nth-child(3) .feature-icon { animation-delay: 0.8s; }
+body.is-idle .feature:nth-child(4) .feature-icon { animation-delay: 1.2s; }
+@keyframes featurePop {
+    0%, 100% { transform: scale(1) rotate(0); }
+    50%      { transform: scale(1.18) rotate(8deg); }
+}
+
+body.is-idle .contact-item .icon { animation: iconWiggle 4s ease-in-out infinite; }
+body.is-idle .contact-item:nth-child(2) .icon { animation-delay: 0.5s; }
+body.is-idle .contact-item:nth-child(3) .icon { animation-delay: 1s; }
+@keyframes iconWiggle {
+    0%, 100% { transform: rotate(0); }
+    12%      { transform: rotate(-9deg) scale(1.06); }
+    24%      { transform: rotate(7deg); }
+    36%      { transform: rotate(0); }
+}
+
+body.is-idle .social-icon:not(:hover) { animation: socialBob 3s ease-in-out infinite; }
+body.is-idle .social-icon:nth-child(2):not(:hover) { animation-delay: 0.3s; }
+body.is-idle .social-icon:nth-child(3):not(:hover) { animation-delay: 0.6s; }
+body.is-idle .social-icon:nth-child(4):not(:hover) { animation-delay: 0.9s; }
+@keyframes socialBob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+body.is-idle .hero-tag { animation: tagGlow 2.2s ease-in-out infinite, tagSway 4.5s ease-in-out infinite; }
+@keyframes tagSway {
+    0%, 100% { transform: rotate(0); }
+    50%      { transform: rotate(1.2deg); }
+}
+
+body.is-idle .card-category { animation: catBlink 3.8s ease-in-out infinite; }
+@keyframes catBlink {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(160, 118, 46, 0); }
+    50%      { box-shadow: 0 0 0 5px rgba(160, 118, 46, 0.12); }
+}
+
+/* ═══════════════════════════════════════════
    RESPONSIVE — Mobile First Reliability
    ═══════════════════════════════════════════ */
+
+@media (max-width: 1120px) {
+    .nav-links { gap: 22px; }
+    .nav-links a { font-size: 0.85rem; letter-spacing: 0.3px; }
+}
 
 @media (max-width: 1024px) {
     section { padding: 80px 5%; }
     .about-container,
     .contact-container { gap: 48px; }
     .footer-content { grid-template-columns: 1fr 1fr; }
-    .nav-links { gap: 18px; }
-    .nav-links a { font-size: 0.85rem; letter-spacing: 0.3px; }
 }
 
-@media (max-width: 768px) {
-    /* Mobile nav drawer — sirf mobile/tablet pe, laptop pe full navbar */
+/* Tablet + Mobile: nav drawer (992px tak) — desktop pe hi full navbar,
+   taki links kabhi logo ke saath squeeze na ho aur underline line clean dikhe */
+@media (max-width: 992px) {
     .menu-toggle { display: flex; }
     .nav-links {
         position: fixed;
@@ -932,10 +1244,18 @@ footer {
         display: block;
         padding: 15px 32px;
         font-size: 1.05rem;
+        letter-spacing: 0.6px;
     }
+    /* Drawer me hover-underline hata ke active pe side indicator line */
     .nav-links a::after { display: none; }
-    .nav-links a.active { color: var(--accent-dark); background: var(--accent-soft); }
+    .nav-links a.active {
+        color: var(--accent-dark);
+        background: var(--accent-soft);
+        box-shadow: inset 4px 0 0 var(--accent);
+    }
+}
 
+@media (max-width: 768px) {
     .about-container { grid-template-columns: 1fr; gap: 40px; }
     .contact-container { grid-template-columns: 1fr; gap: 44px; }
     .stats-container { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; }
@@ -946,7 +1266,8 @@ footer {
     section { padding: 68px 5%; }
     .navbar { padding: 16px 5%; }
     .navbar.scrolled { padding: 12px 5%; }
-    .logo { font-size: 1rem; letter-spacing: 1.5px; }
+    /* Chhoti screen pe bhi "LUXERION FURNISH." poora dikhe */
+    .logo { font-size: 0.95rem; letter-spacing: 1px; }
 
     .hero-content { padding: 96px 18px 70px; }
     .hero-tag { font-size: 0.72rem; padding: 8px 20px; letter-spacing: 2px; }
@@ -978,9 +1299,13 @@ footer {
     .reveal-up, .reveal-left, .reveal-right, .reveal-scale {
         transition-duration: 0.6s;
     }
+    /* Mobile pe letters jaldi aaye */
+    .hero-title .ch { transition-delay: calc(var(--i) * 28ms); }
+    .marquee-group { font-size: 0.88rem; gap: 26px; padding-right: 26px; }
 }
 
 @media (max-width: 380px) {
+    .logo { font-size: 0.85rem; letter-spacing: 0.8px; }
     .hero h1 { font-size: 2.3rem; }
     .stats-container { grid-template-columns: 1fr 1fr; gap: 28px 14px; }
     .stat-item h3 { font-size: 1.9rem; }
